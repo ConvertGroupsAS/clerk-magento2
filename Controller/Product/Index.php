@@ -113,6 +113,11 @@ class Index extends AbstractAction
                 $finalPrice = $item->getFinalPrice();
                 $price = $item->getPrice();
 
+                //Fix for configurable products
+                if ($item->getTypeId() === Configurable::TYPE_CODE) {
+                    $price = $item->getPriceInfo()->getPrice('regular_price')->getValue();//->getPrice('regular_price');
+                }
+
                 return $finalPrice < $price;
             } catch (\Exception $e) {
                 return false;
