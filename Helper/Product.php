@@ -24,10 +24,12 @@ class Product
      */
     public function __construct(
         \Magento\CatalogInventory\Helper\Stock $stockHelper,
-        \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage
+        \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage,
+        \Magento\Framework\Pricing\Helper\Data $pricingHelper
     ) {
         $this->stockHelper = $stockHelper;
         $this->stockRegistryStorage = $stockRegistryStorage;
+        $this->pricingHelper = $pricingHelper;
     }
 
     /**
@@ -48,5 +50,16 @@ class Product
         $this->stockHelper->assignStatusToProduct($product);
 
         return $product->isSalable();
+    }
+
+    /**
+     * Format the given value as currency
+     *
+     * @param float $value
+     * @return mixed
+     */
+    public function formatCurrency($value)
+    {
+        return $this->pricingHelper->currency($value, true, false);
     }
 }
