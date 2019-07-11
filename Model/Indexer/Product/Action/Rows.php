@@ -177,12 +177,17 @@ class Rows
 
         $imageUrl = $this->imageHandler->handle($product);
 
+        $price = $product->getFinalPrice();
+        $listPrice = $product->getPrice();
+
         $productItem = [
             'id' => $product->getId(),
             'name' => $product->getName(),
             'description' => $product->getDescription(),
-            'price' => $product->getFinalPrice(),
-            'list_price' => $product->getPrice(),
+            'price' => $price,
+            'price_formatted' => $this->helper->formatCurrency($price),
+            'list_price' => $listPrice,
+            'list_price_formatted' => $this->helper->formatCurrency($listPrice),
             'image' => $imageUrl,
             'url' => $product->getUrlModel()->getUrl($product),
             'categories' => $product->getCategoryIds(),

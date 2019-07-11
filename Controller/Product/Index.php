@@ -32,21 +32,32 @@ class Index extends AbstractAction
     protected $imageHandler;
 
     /**
-     * Popup controller constructor.
+     * @var \Clerk\Clerk\Helper\Product
+     */
+    protected $productHelper;
+
+    /**
+     * Product Index constructor.
      *
      * @param Context $context
      * @param ScopeConfigInterface $scopeConfig
+     * @param CollectionFactory $productCollectionFactory
+     * @param \Clerk\Clerk\Helper\Product $productHelper
+     * @param Image $imageHandler
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
         ScopeConfigInterface $scopeConfig,
         CollectionFactory $productCollectionFactory,
+        \Clerk\Clerk\Helper\Product $productHelper,
         Image $imageHandler,
         LoggerInterface $logger
     )
     {
         $this->collectionFactory = $productCollectionFactory;
         $this->imageHandler = $imageHandler;
+        $this->productHelper = $productHelper;
         $this->addFieldHandlers();
 
         parent::__construct($context, $scopeConfig, $logger);
@@ -67,6 +78,13 @@ class Index extends AbstractAction
             }
         });
 
+        //Add price_formatted fieldhandler
+        $this->addFieldHandler('price_formatted', function($item) {
+            $priceHandler = $this->fieldHandlers['price'];
+            $price = $priceHandler($item);
+            return $this->productHelper->formatCurrency($price);
+        });
+
         //Add list_price fieldhandler
         $this->addFieldHandler('list_price', function($item) {
             try {
@@ -81,6 +99,13 @@ class Index extends AbstractAction
             } catch(\Exception $e) {
                 return 0;
             }
+        });
+
+        //Add list_price_formatted fieldhandler
+        $this->addFieldHandler('list_price_formatted', function($item) {
+            $priceHandler = $this->fieldHandlers['list_price'];
+            $price = $priceHandler($item);
+            return $this->productHelper->formatCurrency($price);
         });
 
 
@@ -132,6 +157,8 @@ class Index extends AbstractAction
             'description',
             'price',
             'list_price',
+            'price_formatted',
+            'list_price_formatted',
             'image',
             'url',
             'categories',
