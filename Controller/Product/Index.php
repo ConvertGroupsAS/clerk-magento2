@@ -162,11 +162,9 @@ class Index extends AbstractAction
         $collection->addFieldToSelect('*');
 
         //Filter on is_saleable if defined
-        if ($this->scopeConfig->getValue(Config::XML_PATH_PRODUCT_SYNCHRONIZATION_SALABLE_ONLY)) {
-            $collection->getSelect()->where(
-                'stock_status_index.stock_status = ?',
-                \Magento\CatalogInventory\Model\Stock\Status::STATUS_IN_STOCK
-            );
+        if (!$this->scopeConfig->getValue(Config::XML_PATH_PRODUCT_SYNCHRONIZATION_SALABLE_ONLY)) {
+            // To bypass removing out of stock products in results
+            $collection->setFlag('has_stock_status_filter', true);
         }
 
         $visibility = $this->scopeConfig->getValue(Config::XML_PATH_PRODUCT_SYNCHRONIZATION_VISIBILITY);
