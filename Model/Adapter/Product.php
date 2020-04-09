@@ -258,12 +258,6 @@ class Product extends AbstractAdapter
                     return false;
                 }
             });
-
-//            $this->addFieldHandler('convert_labels', function ($item) {
-//
-//                return $result;
-//            });
-
         } catch (\Exception $e) {
 
             $this->clerk_logger->error('Getting Field Handlers Error', ['error' => $e->getMessage()]);
@@ -276,17 +270,12 @@ class Product extends AbstractAdapter
         $info = parent::getInfoForItem($resourceItem);
 
         if ($info) {
-            $info['convert_labels'] = [];
+            $info['convert_label_titles'] = [];
+            $info['convert_label_css_classes'] = [];
             $labels = $this->labelRepository->getLabels($resourceItem);
             foreach ($labels as $label) {
-//                $result[] = [
-//                    'title' => $label->title,
-//                    'css_class' => $label->cssClass,
-//                ];
-                $labelId = $label->rule->getId();
-                $info['convert_labels'][] = $labelId;
-                $info["convert_label_{$labelId}_title"] = $label->title;
-                $info["convert_label_{$labelId}_css_class"] = $label->cssClass;
+                $info['convert_label_titles'][] = $label->title;
+                $info['convert_label_css_classes'][] = $label->cssClass;
             }
         }
 

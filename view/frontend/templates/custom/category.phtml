@@ -5,10 +5,12 @@
     data-category="<?= $block->getData('current_category')->getId() ?>"
     data-limit="8"
     data-offset="0"
+    data-attributes='["awesome"]'
     data-facets-target='#custom-search-filters'
     data-facets-attributes='["list_price","format","activity","eco_collection","sale","performance_fabric","age","gender","climate","categories","material","price","stock","color","new","category_gear","features_bags","style_general","on_sale","pattern","erin_recommends","strap_bags","style_bags","style_bottom"]'
     data-facets-titles='{"list_price":"List Price","format":"Format","activity":"Activity","eco_collection":"Eco Collection","sale":"Sale","performance_fabric":"Performance","age":"Age","gender":"Gender","climate":"Climate","categories":"Categories","material":"Material","price":"Price","stock":"Stock","color":"Color","new":"Is New","category_gear":"Category","features_bags":"Features","style_general":"Style","on_sale":"On Sale","pattern":"Pattern","erin_recommends":"Erin Recommends","strap_bags":"Strap","style_bags":"Style","style_bottom":"Style Buttom"}'
 ></div>
+<!-- data-product-attributes='["very_awesome","product.convert_label_1_title","product.convert_label_1_css_class","product.convert_label_2_title","product.convert_label_2_css_class"]' -->
 <script>
     require(['jquery', 'domReady!'], function ($) {
         var $category = $('#clerk-category');
@@ -17,6 +19,8 @@
             value = value.replace(/^(#!)+/, '');
             $category.attr('data-filter', value);
         }
+
+        console.log('RUN CLERK CONTENT');
         Clerk('content', '#clerk-category');
 
         Clerk('on', 'rendered', '#clerk-category', function (content, data) {
@@ -36,36 +40,29 @@
     });
 </script>
 <script type="text/x-template" id="category-template">
-    <div class="clerk-design-component-OwFkUS3E"  > <h2 id="wnnmEAd3"  class="clerk-design-component-wnnmEAd3"  > {{headline}} </h2>  <div class="clerk-grid"  > {% for product in products %} <div class="clerk-design-product clerk-design-component-KnTArcbb"  > <div class="clerk-design-component-xXWIkSmb clerk-instant-search-key-selectable"  > <a style="border-bottom:none;display:inherit;width:100%;text-decoration:none;color:inherit;"  href="{{ product.url }}"  > <div style="display:inherit;width:100%;"  >
-
+    <div class="clerk-design-component-OwFkUS3E"  > <h2 id="wnnmEAd3"  class="clerk-design-component-wnnmEAd3"  > {{headline}} </h2>  <div class="clerk-grid"  >
+    {% for product in products %} <div class="clerk-design-product clerk-design-component-KnTArcbb"  > <div class="clerk-design-component-xXWIkSmb clerk-instant-search-key-selectable"  > <a style="border-bottom:none;display:inherit;width:100%;text-decoration:none;color:inherit;"  href="{{ product.url }}"  > <div style="display:inherit;width:100%;"  >
 
     <div class="label-container clerk-badge top-right">
-    {% if product.price < product.list_price %}
-      <div id="yezI0uMJ"  class="clerk-design-component-yezI0uMJ clerk-label-sale"  > On Sale </div>
-    {%endif%}
+      {% if product.price < product.list_price %}
+        <div id="yezI0uMJ"  class="clerk-design-component-yezI0uMJ clerk-label-sale"  > On Sale </div>
+      {%endif%}
 
-    {% if product.convert_labels%}
-      {% for label_id in product.convert_labels %}
-        <div id="yezI0uMJ"  class="clerk-design-component-yezI0uMJ {{product['convert_label_' + label_id + '_css_class']}}"  >
-          {{product['convert_label_' + label_id + '_title']}}
+      {% for title in product.convert_label_titles %}
+        <div id="yezI0uMJ"  class="clerk-design-component-yezI0uMJ {{ product.convert_label_css_classes[loop.index] }}"  >
+          {{ title }}
         </div>
       {% endfor %}
-    {%endif%}
     </div>
 
-    <div class="clerk-design-component-HXs4Z8iY"  style="background-image: url('{{product.image}}");"  > </div>  <div id="waUyC5wP"  class="clerk-design-product-name clerk-design-component-waUyC5wP"  > {{product.name}} </div>  <div class="clerk-design-component-agDWCslM"  >  {% if product.price < product.list_price %} <div class="clerk-design-product-price clerk-design-component-8PE2gPQ6"  id="8PE2gPQ6"  > {{ product.list_price | money_eu }} </div> {%endif%}  {% if product.price%} <div class="clerk-design-product-price clerk-design-component-j2EtocAf"  id="j2EtocAf"  > {{ product.price | money_eu }} </div> {%endif%}  </div>  <div id="DxNgOKB4"  class="clerk-design-button clerk-design-component-DxNgOKB4"  href=""  > Buy Now </div>  </div> </a> </div>  </div> {% endfor %} </div>  {% if count >products.length %} <div id="vP1gj3o5"  class="clerk-load-more-button clerk-design-component-vP1gj3o5"  href="undefined"  onclick="Clerk('content', '#{{ content.id }}', 'more', 8);"  > Show More Results </div> {%endif%}  </div>
+    <div class="clerk-design-component-HXs4Z8iY"  style="background-image: url('{{product.image}}");"  > </div>  <div id="waUyC5wP"  class="clerk-design-product-name clerk-design-component-waUyC5wP"  > {{product.name}} </div>  <div class="clerk-design-component-agDWCslM"  >  {% if product.price < product.list_price %} <div class="clerk-design-product-price clerk-design-component-8PE2gPQ6"  id="8PE2gPQ6"  > {{ product.list_price | money_eu }} </div> {%endif%}  {% if product.price%} <div class="clerk-design-product-price clerk-design-component-j2EtocAf"  id="j2EtocAf"  > {{ product.price | money_eu }} </div> {%endif%}  </div>  <div id="DxNgOKB4"  class="clerk-design-button clerk-design-component-DxNgOKB4"  href=""  > Buy Now </div>  </div> </a> </div>  </div>
+    {% endfor %}
+    </div>  {% if count >products.length %} <div id="vP1gj3o5"  class="clerk-load-more-button clerk-design-component-vP1gj3o5"  href="undefined"  onclick="Clerk('content', '#{{ content.id }}', 'more', 8);"  > Show More Results </div> {%endif%}  </div>
 
-    <!--
-     {{ product.convert_label_1_title }}
-     {{ product.convert_label_1_css_class }}
 
-     {{ product.convert_label_2_title }}
-     {{ product.convert_label_2_css_class }}
-
-     {{ product.convert_label_3_title }}
-     {{ product.convert_label_3_css_class }}
-
-     {{ product.convert_label_4_title }}
-     {{ product.convert_label_4_css_class }}
-    -->
+    <!-- declare used attributes, template parses and loads only used -->
+    {% if false %}
+      {{ product.convert_label_css_titles }}
+      {{ product.convert_label_css_classes }}
+    {% endif %}
 </script>
