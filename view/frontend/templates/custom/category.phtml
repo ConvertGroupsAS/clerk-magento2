@@ -1,6 +1,7 @@
 <div
     id="clerk-category"
-    data-template="@category-view"
+    data-api="recommendations/category/popular"
+    data-template="#category-template"
     data-category="<?= $block->getData('current_category')->getId() ?>"
     data-limit="8"
     data-offset="0"
@@ -9,13 +10,14 @@
     data-facets-titles='{"list_price":"List Price","format":"Format","activity":"Activity","eco_collection":"Eco Collection","sale":"Sale","performance_fabric":"Performance","age":"Age","gender":"Gender","climate":"Climate","categories":"Categories","material":"Material","price":"Price","stock":"Stock","color":"Color","new":"Is New","category_gear":"Category","features_bags":"Features","style_general":"Style","on_sale":"On Sale","pattern":"Pattern","erin_recommends":"Erin Recommends","strap_bags":"Strap","style_bags":"Style","style_bottom":"Style Buttom"}'
 ></div>
 <script>
-    require(['jquery', 'domReady!'], function ($) {
+    require(['jquery', 'text!Clerk_Clerk/template/category.html', 'domReady!'], function ($, categoryTmpl) {
         var $category = $('#clerk-category');
         if (window.location.hash) {
             var value = decodeURIComponent(window.location.hash);
             value = value.replace(/^(#!)+/, '');
             $category.attr('data-filter', value);
         }
+        $('#category-template').html(categoryTmpl);
         Clerk('content', '#clerk-category');
 
         Clerk('on', 'rendered', '#clerk-category', function (content, data) {
@@ -34,3 +36,4 @@
         // });
     });
 </script>
+<script type="text/x-template" id="category-template"></script>
