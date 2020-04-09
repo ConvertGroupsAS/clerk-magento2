@@ -19,12 +19,12 @@ use Clerk\Clerk\Controller\Logger\ClerkLogger;
 class Index extends AbstractAction
 {
     /**
-     * @var ClerkLogger 
+     * @var ClerkLogger
      */
     protected $clerk_logger;
 
     /**
-     * @var PageRepositoryInterface 
+     * @var PageRepositoryInterface
      */
     protected $_PageRepositoryInterface;
 
@@ -170,5 +170,5 @@ class Index extends AbstractAction
         return true;
 
     }
-    
+
 }

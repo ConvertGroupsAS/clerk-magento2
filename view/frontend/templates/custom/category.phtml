@@ -1,0 +1,36 @@
+<div
+    id="clerk-category"
+    data-template="@category-view"
+    data-category="<?= $block->getData('current_category')->getId() ?>"
+    data-limit="8"
+    data-offset="0"
+    data-facets-target='#custom-search-filters'
+    data-facets-attributes='["list_price","format","activity","eco_collection","sale","performance_fabric","age","gender","climate","categories","material","price","stock","color","new","category_gear","features_bags","style_general","on_sale","pattern","erin_recommends","strap_bags","style_bags","style_bottom"]'
+    data-facets-titles='{"list_price":"List Price","format":"Format","activity":"Activity","eco_collection":"Eco Collection","sale":"Sale","performance_fabric":"Performance","age":"Age","gender":"Gender","climate":"Climate","categories":"Categories","material":"Material","price":"Price","stock":"Stock","color":"Color","new":"Is New","category_gear":"Category","features_bags":"Features","style_general":"Style","on_sale":"On Sale","pattern":"Pattern","erin_recommends":"Erin Recommends","strap_bags":"Strap","style_bags":"Style","style_bottom":"Style Buttom"}'
+></div>
+<script>
+    require(['jquery', 'domReady!'], function ($) {
+        var $category = $('#clerk-category');
+        if (window.location.hash) {
+            var value = decodeURIComponent(window.location.hash);
+            value = value.replace(/^(#!)+/, '');
+            $category.attr('data-filter', value);
+        }
+        Clerk('content', '#clerk-category');
+
+        Clerk('on', 'rendered', '#clerk-category', function (content, data) {
+            console.log('rendered', data);
+            if (data.filter) {
+                window.location.hash = '!' + data.filter;
+            } else {
+                // clear
+                history.pushState('', document.title, window.location.pathname);
+            }
+        });
+        // ['model', 'update', 'response', 'render', 'rendered', 'live_search_update'].forEach(function (event) {
+        //     Clerk('on', event, '#clerk-category', function (content, data) {
+        //         console.info(event + ' fired', content, data);
+        //     });
+        // });
+    });
+</script>

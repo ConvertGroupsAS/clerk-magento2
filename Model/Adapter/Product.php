@@ -5,6 +5,7 @@ namespace Clerk\Clerk\Model\Adapter;
 use Clerk\Clerk\Controller\Logger\ClerkLogger;
 use Clerk\Clerk\Model\Config;
 use Clerk\Clerk\Helper\Image;
+use Convert\Labels\Model\LabelRepository;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\ManagerInterface;
@@ -34,6 +35,12 @@ class Product extends AbstractAdapter
      * @var string
      */
     protected $eventPrefix = 'product';
+
+    /**
+     * @var LabelRepository
+     */
+    protected $labelRepository;
+
     /**
      * @var
      */
@@ -61,13 +68,14 @@ class Product extends AbstractAdapter
         StoreManagerInterface $storeManager,
         Image $imageHelper,
         ClerkLogger $Clerklogger,
-        \Magento\CatalogInventory\Helper\Stock $stockFilter
-
+        \Magento\CatalogInventory\Helper\Stock $stockFilter,
+        LabelRepository $labelRepository
     )
     {
         $this->_stockFilter = $stockFilter;
         $this->clerk_logger = $Clerklogger;
         $this->imageHelper = $imageHelper;
+        $this->labelRepository = $labelRepository;
         parent::__construct($scopeConfig, $eventManager, $storeManager, $collectionFactory, $Clerklogger);
     }
 
@@ -251,11 +259,38 @@ class Product extends AbstractAdapter
                 }
             });
 
+//            $this->addFieldHandler('convert_labels', function ($item) {
+//
+//                return $result;
+//            });
+
         } catch (\Exception $e) {
 
             $this->clerk_logger->error('Getting Field Handlers Error', ['error' => $e->getMessage()]);
 
         }
+    }
+
+    public function getInfoForItem($resourceItem)
+    {
+        $info = parent::getInfoForItem($resourceItem);
+
+        if ($info) {
+            $info['convert_labels'] = [];
+            $labels = $this->labelRepository->getLabels($resourceItem);
+            foreach ($labels as $label) {
+//                $result[] = [
+//                    'title' => $label->title,
+//                    'css_class' => $label->cssClass,
+//                ];
+                $labelId = $label->rule->getId();
+                $info['convert_labels'][] = $labelId;
+                $info["convert_label_{$labelId}_title"] = $label->title;
+                $info["convert_label_{$labelId}_css_class"] = $label->cssClass;
+            }
+        }
+
+        return $info;
     }
 
     /**
@@ -287,11 +322,11 @@ class Product extends AbstractAdapter
             if ($additionalFields) {
                 $fields = array_merge($fields, str_replace(' ','' ,explode(',', $additionalFields)));
             }
-            
+
             foreach ($fields as $key => $field) {
 
                 $fields[$key] = $field;
-                
+
             }
 
             return $fields;
