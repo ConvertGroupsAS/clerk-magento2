@@ -177,17 +177,22 @@ class Rows
 
         $imageUrl = $this->imageHandler->handle($product);
 
+        $productType = $product->getTypeId();
+        // get minimal price for bundle products both final (sale) and regular (original)
+        $price = $productType === Type::TYPE_BUNDLE ? $product->getPriceInfo()->getPrice('final_price')->getMinimalPrice()->getValue(): $product->getFinalPrice();
+        $list_price = $productType === Type::TYPE_BUNDLE ? $product->getPriceInfo()->getPrice('regular_price')->getMinimalPrice()->getValue(): $product->getPrice();
+
         $productItem = [
             'id' => $product->getId(),
             'name' => $product->getName(),
             'description' => $product->getDescription(),
-            'price' => (float)$product->getFinalPrice(),
-            'list_price' => (float)$product->getPrice(),
+            'price' => (float)$price,
+            'list_price' => (float)$list_price,
             'image' => $imageUrl,
             'url' => $product->getUrlModel()->getUrl($product),
             'categories' => $product->getCategoryIds(),
             'sku' => $product->getSku(),
-            'on_sale' => ($product->getFinalPrice() < $product->getPrice()),
+            'on_sale' => ($price < $list_price)//($product->getFinalPrice() < $product->getPrice()),
         ];
 
         /**

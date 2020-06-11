@@ -11,6 +11,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Psr\Log\LoggerInterface;
+use Magento\Bundle\Model\Product\Type as Bundle;
 
 class Index extends AbstractAction
 {
@@ -60,7 +61,16 @@ class Index extends AbstractAction
         //Add price fieldhandler
         $this->addFieldHandler('price', function($item) {
             try {
-                $price = $item->getFinalPrice();
+                if ($item->getTypeId() === Bundle::TYPE_CODE) {
+                    //get minimal price for bundle products
+                    $price = $item
+                        ->getPriceInfo()
+                        ->getPrice('final_price')
+                        ->getMinimalPrice()
+                        ->getValue();
+                } else {
+                    $price = $item->getFinalPrice();
+                }
                 return (float) $price;
             } catch(\Exception $e) {
                 return 0;
@@ -76,7 +86,14 @@ class Index extends AbstractAction
                 if ($item->getTypeId() === Configurable::TYPE_CODE) {
                     $price = $item->getPriceInfo()->getPrice('regular_price')->getValue();//->getPrice('regular_price');
                 }
-
+                //get minimal price for bundle products
+                if ($item->getTypeId() === Bundle::TYPE_CODE) {
+                    $price = $item
+                        ->getPriceInfo()
+                        ->getPrice('regular_price')
+                        ->getMinimalPrice()
+                        ->getValue();
+                }
                 return (float) $price;
             } catch(\Exception $e) {
                 return 0;
